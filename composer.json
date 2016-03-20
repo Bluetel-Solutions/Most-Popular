@@ -1,0 +1,29 @@
+{
+    "name": "bluetel-solutions/most-popular",
+    "description": "A pluggable library to query popular items!",
+    "keywords": ["google analytics", "ga", "most popular", "popular", "popularity", "popular stories"],
+    "type": "library",
+    "require": {
+        "php": ">=5.5.0",
+        "google/apiclient": "^2.0.0@RC"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Wilson",
+            "homepage": "https://ax.gy/",
+            "email": "a@ax.gy"
+        },
+        {
+            "name": "Bluetel Solutions",
+            "homepage": "http://www.bluetel.co.uk/",
+            "email": "developers@bluetel.co.uk"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Bluetel\\MostPopular\\": "src/" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Bluetel\\MostPopular\\Tests\\": "tests/" }
+    }
+}
