@@ -2,56 +2,57 @@
 
 namespace Bluetel\MostPopular\Providers;
 
-use Bluetel\MostPopular\Results;
 use Bluetel\MostPopular\Exceptions;
+use Bluetel\MostPopular\Results;
 
 /**
- * Google Analytics Provider
+ * Google Analytics Provider.
  *
  * @author Alex Wilson <a@ax.gy>
  */
 class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterface
 {
     /**
-     * GA Terms
+     * GA Terms.
+     *
      * @var array
      */
-    private $terms = array(
+    private $terms = [
         'pageviews' => 'ga:pageviews',
-        'title' => 'ga:pageTitle',
-        'path' => 'ga:pagePath'
-    );
+        'title'     => 'ga:pageTitle',
+        'path'      => 'ga:pagePath',
+    ];
 
     /**
      * Filters.
      *
      * @var array
      */
-    private $filters = array();
+    private $filters = [];
 
     /**
      * Metrics.
      *
      * @var array
      */
-    private $metrics = array();
+    private $metrics = [];
 
     /**
      * Dimensions.
      *
      * @var array
      */
-    private $dimensions = array();
+    private $dimensions = [];
 
     /**
-     * Google API PHP Client
+     * Google API PHP Client.
      *
      * @var Google_Client
      */
     private $client;
 
     /**
-     * Google Analytics Service
+     * Google Analytics Service.
      *
      * @var Google_Service_Analytics
      */
@@ -65,15 +66,14 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     private $authConfigFile;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
         $this
             ->addMetric($this->terms['pageviews'])
             ->addDimension($this->terms['path'])
-            ->addDimension($this->terms['title'])
-        ;
+            ->addDimension($this->terms['title']);
 
         return parent::__construct();
     }
@@ -88,6 +88,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     public function addFilter($filter)
     {
         $this->filters[] = $filter;
+
         return $this;
     }
 
@@ -152,7 +153,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMostPopular()
     {
@@ -161,7 +162,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
         $profileId = $this->profileId;
         if (empty($profileId)) {
             throw new Exceptions\ProviderFailureException(
-                "No profile ID set!  Cannot search GA without a profile ID.",
+                'No profile ID set!  Cannot search GA without a profile ID.',
                 404
             );
         }
@@ -179,7 +180,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
         $metrics = implode(',', $this->metrics);
 
         // Check "optional" parameters.
-        $params = array();
+        $params = [];
 
         // Start index is offset
         $params['start-index'] = $this->offset;
@@ -188,7 +189,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
         $params['max-results'] = $this->limit;
 
         // Sort by pageviews.
-        $params['sort'] = (($this->sort > 0) ? '' : '-') . $this->terms['pageviews'];
+        $params['sort'] = (($this->sort > 0) ? '' : '-').$this->terms['pageviews'];
 
         if (!empty($this->dimensions)) {
             $params['dimensions'] = implode(',', $this->dimensions);
@@ -227,16 +228,16 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     public function mapResults($results)
     {
         if (0 === $results['totalResults']) {
-            return array();
+            return [];
         }
 
         // Convert column headers to something human readable.
-        $headers = array_flip(array_map(function($columnHeader) {
+        $headers = array_flip(array_map(function ($columnHeader) {
             return $this->tagToTerm($columnHeader['name']);
         }, $results['columnHeaders']));
 
         // Finally return our results.
-        return array_map(function($row) use ($headers) {
+        return array_map(function ($row) use ($headers) {
             return new Results\Result(
                 $row[$headers['path']],
                 $row[$headers['title']]
@@ -245,11 +246,11 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     }
 
     /**
-     * Returns a term from a given tag
+     * Returns a term from a given tag.
      *
-     * @param  string $originalTag GA Tag
+     * @param string $originalTag GA Tag
      *
-     * @return string              Term
+     * @return string Term
      */
     protected function tagToTerm($originalTag)
     {
@@ -258,6 +259,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
                 return $term;
             }
         }
+
         return $originalTag;
     }
 
@@ -267,12 +269,12 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     private function getGoogleClient()
     {
         if (is_null($this->client)) {
-            if (!class_exists("Google_Client")) {
-                throw new Exceptions\ProviderFailureException("Could not find the Google_Client class", 404);
+            if (!class_exists('Google_Client')) {
+                throw new Exceptions\ProviderFailureException('Could not find the Google_Client class', 404);
             }
             $this->client = new \Google_Client();
 
-            $this->client->setApplicationName("Most_Popular");
+            $this->client->setApplicationName('Most_Popular');
             $this->client->setAuthConfig($this->authConfigFile);
         }
 
@@ -285,8 +287,8 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
     private function getAnalyticsService()
     {
         if (is_null($this->analyticsService)) {
-            if (!class_exists("Google_Service_Analytics")) {
-                throw new Exceptions\ProviderFailureException("Could not find the Google_Service_Analytics class", 404);
+            if (!class_exists('Google_Service_Analytics')) {
+                throw new Exceptions\ProviderFailureException('Could not find the Google_Service_Analytics class', 404);
             }
             $client = $this->getGoogleClient();
             $this->client->setScopes([\Google_Service_Analytics::ANALYTICS_READONLY]);

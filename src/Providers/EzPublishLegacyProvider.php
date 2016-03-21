@@ -2,11 +2,11 @@
 
 namespace Bluetel\MostPopular\Providers;
 
-use Bluetel\MostPopular\Results;
 use Bluetel\MostPopular\Exceptions;
+use Bluetel\MostPopular\Results;
 
 /**
- * Google Analytics Provider
+ * Google Analytics Provider.
  *
  * @author Alex Wilson <a@ax.gy>
  */
@@ -17,7 +17,7 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
      *
      * @var array
      */
-    private $contentClasses = array();
+    private $contentClasses = [];
 
     /**
      * Section ID.
@@ -27,11 +27,12 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
     private $sectionId;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
         $this->setSectionId(2);
+
         return parent::__construct();
     }
 
@@ -64,14 +65,14 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getMostPopular()
     {
         // Sanity check, we need eZ Publish classes.
-        if (!class_exists("eZFunctionHandler") or !class_exists("eZViewCounter")) {
+        if (!class_exists('eZFunctionHandler') or !class_exists('eZViewCounter')) {
             throw new Exceptions\ProviderFailureException(
-                "Cannot use the EzPublishLegacyProvider without eZ Publish.",
+                'Cannot use the EzPublishLegacyProvider without eZ Publish.',
                 404
             );
         }
@@ -85,33 +86,33 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
         $limit = $this->limit;
 
         if (0 !== $this->offset) {
-            trigger_error("Offset is not supported by EzPublishLegacyProvider", E_USER_NOTICE);
+            trigger_error('Offset is not supported by EzPublishLegacyProvider', E_USER_NOTICE);
         }
 
         if (0 > $this->offset) {
-            trigger_error("Ascending sort is not supported by EzPublishLegacyProvider", E_USER_NOTICE);
+            trigger_error('Ascending sort is not supported by EzPublishLegacyProvider', E_USER_NOTICE);
         }
 
         // Retrieve content classes.
         $contentClasses = \eZFunctionHandler::execute(
             'class',
             'list',
-            array('class_filter' => $contentClasses)
+            ['class_filter' => $contentClasses]
         );
 
-        $mostPopularArray = array();
-        $names = array();
-        $sortedArray = array();
+        $mostPopularArray = [];
+        $names = [];
+        $sortedArray = [];
 
         foreach ($contentClasses as $contentClass) {
             $contentObjectArray = \eZFunctionHandler::execute(
                 'content',
                 'view_top_list',
-                array(
-                    'class_id' => $contentClass->ID,
+                [
+                    'class_id'   => $contentClass->ID,
                     'section_id' => $sectionId,
-                    'limit' => $limit,
-                )
+                    'limit'      => $limit,
+                ]
             );
 
             foreach ($contentObjectArray as $contentObject) {
@@ -129,7 +130,7 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
         // Reverse sort so that things are in order of view count.
         arsort($sortedArray);
 
-        $mostPopular = array();
+        $mostPopular = [];
         foreach ($sortedArray as $nodeId => $count) {
             if (array_key_exists($nodeId, $mostPopularArray)) {
                 $mostPopular[] = $mostPopularArray[$nodeId];
@@ -139,11 +140,11 @@ class EzPublishLegacyProvider extends AbstractProvider implements ProviderInterf
         // Finally return our results.
         return array_map(function ($node) use ($names) {
             $name = $names[$node];
+
             return new Results\Result(
                 $node,
                 $name
             );
         }, array_slice($mostPopular, 0, $limit));
     }
-
 }
