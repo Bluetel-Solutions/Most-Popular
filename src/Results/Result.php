@@ -8,17 +8,17 @@ namespace Bluetel\MostPopular\Results;
 class Result implements ResultInterface
 {
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     private $identifier;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     private $name;
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function __construct($identifier, $name)
     {
@@ -27,7 +27,7 @@ class Result implements ResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getIdentifier()
     {
@@ -35,7 +35,7 @@ class Result implements ResultInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function getName()
     {

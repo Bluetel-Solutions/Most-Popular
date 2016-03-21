@@ -5,55 +5,54 @@ namespace Bluetel\MostPopular\Providers;
 use DateTime;
 
 /**
- * Abstract Provider
+ * Abstract Provider.
  */
 abstract class AbstractProvider
 {
     /**
-     * Start time
+     * Start time.
      *
      * @var DateTime
      */
     protected $startTime;
 
     /**
-     * End time
+     * End time.
      *
      * @var DateTime
      */
     protected $endTime;
 
     /**
-     * Limit
+     * Limit.
      *
      * @var int
      */
     protected $limit;
 
     /**
-     * Offset
+     * Offset.
      *
      * @var int
      */
     protected $offset;
 
     /**
-     * Sort direction
+     * Sort direction.
      *
      * @var int
      */
     protected $sort;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
-        $date = new DateTime;
+        $date = new DateTime();
         $this
             ->setEndTime($date)
-            ->setStartTime($date->modify("-1 day"))
-        ;
+            ->setStartTime($date->modify('-1 day'));
     }
 
     /**
@@ -63,7 +62,8 @@ abstract class AbstractProvider
      */
     public function setStartTime(DateTime $startTime)
     {
-        $this->startTime = clone($startTime);
+        $this->startTime = clone $startTime;
+
         return $this;
     }
 
@@ -74,7 +74,8 @@ abstract class AbstractProvider
      */
     public function setEndTime(DateTime $endTime)
     {
-        $this->endTime = clone($endTime);
+        $this->endTime = clone $endTime;
+
         return $this;
     }
 
@@ -91,7 +92,7 @@ abstract class AbstractProvider
     /**
      * Sets thq query limit.
      *
-     * @param integer $limit
+     * @param int $limit
      */
     public function setLimit($limit = 5)
     {
@@ -101,7 +102,7 @@ abstract class AbstractProvider
     /**
      * Sets the query offset.
      *
-     * @param integer $offset
+     * @param int $offset
      */
     public function setOffset($offset = 0)
     {

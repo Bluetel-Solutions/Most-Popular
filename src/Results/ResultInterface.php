@@ -9,6 +9,7 @@ interface ResultInterface
 {
     /**
      * Results will be constructed with an identifier, and a name.
+     *
      * @param string $identifier Result identifier, typically a URL or a CMS identifier.
      * @param string $name       Result name
      */

@@ -10,12 +10,12 @@ use DateTime;
 interface ProviderInterface
 {
     /**
-     * Ascending sort
+     * Ascending sort.
      */
     const SORT_ASC = 1;
 
     /**
-     * Descending sort
+     * Descending sort.
      */
     const SORT_DESC = -1;
 
@@ -58,7 +58,7 @@ interface ProviderInterface
     /**
      * Sets a limit for a popularity query.
      *
-     * @param integer $limit Limit for popularity query.
+     * @param int $limit Limit for popularity query.
      *
      * @return self
      */
@@ -67,7 +67,7 @@ interface ProviderInterface
     /**
      * Set an offset for a popularity query.
      *
-     * @param integer $offset Offset for popularity query.
+     * @param int $offset Offset for popularity query.
      *
      * @return self
      */
