@@ -173,7 +173,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
 
         // Start date and end date must be formatted as Y-m-d.
         $startDate = $this->startTime->format('Y-m-d');
-        $endDate = $this->startTime->format('Y-m-d');
+        $endDate = $this->endTime->format('Y-m-d');
 
         // Metrics are apparently comma separated.
         $metrics = implode(',', $this->metrics);
@@ -199,7 +199,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
         };
 
         try {
-            $result = $analyticsService->data_ga->get(
+            $results = $analyticsService->data_ga->get(
                $profileId,
                $startDate,
                $endDate,
@@ -214,10 +214,26 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
             );
         }
 
+        return $this->mapResults($results);
+    }
+
+    /**
+     * Map results from GA.
+     *
+     * @param array $results Maps GA results.
+     *
+     * @return \Bluetel\MostPopular\Results\ResultInterface[] Returns an array of objects implementing ResultInterface.
+     */
+    public function mapResults($results)
+    {
+        if (0 === $results['totalResults']) {
+            return array();
+        }
+
         // Convert column headers to something human readable.
         $headers = array_flip(array_map(function($columnHeader) {
             return $this->tagToTerm($columnHeader['name']);
-        }, $result['columnHeaders']));
+        }, $results['columnHeaders']));
 
         // Finally return our results.
         return array_map(function($row) use ($headers) {
@@ -225,7 +241,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
                 $row[$headers['path']],
                 $row[$headers['title']]
             );
-        }, $result['rows']);
+        }, $results['rows']);
     }
 
     /**
@@ -235,7 +251,7 @@ class GoogleAnalyticsProvider extends AbstractProvider implements ProviderInterf
      *
      * @return string              Term
      */
-    public function tagToTerm($originalTag)
+    protected function tagToTerm($originalTag)
     {
         foreach ($this->terms as $term => $tag) {
             if ($originalTag == $tag) {
